@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: tradingview-replay-api
+    runtime: python
+    plan: free              # Free tier — upgrade to "starter" for always-on
+
+    # Build step: install dependencies from requirements.txt
+    buildCommand: pip install -r requirements.txt
+
+    # Start command: Render injects $PORT automatically.
+    # We pass it via the --port flag so uvicorn picks it up.
+    # host 0.0.0.0 ensures Render's load balancer can reach the process.
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+
+    # Render health-check endpoint (must return HTTP 200)
+    healthCheckPath: /health
+
+    # Environment variables
+    # Add your Vercel frontend URL here after deploying the frontend.
+    # SECRET values should be set in the Render dashboard, not here.
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+
+      - key: CACHE_TTL_SECONDS
+        value: "300"          # 5 minutes; increase to reduce Yahoo Finance calls
+
+      # Set FRONTEND_URL to your Vercel deployment URL once known, e.g.:
+      #   https://my-tradingview-clone.vercel.app
+      # Until then, "*" allows all origins (fine during development).
+      - key: FRONTEND_URL
+        value: "*"
+
+      # PORT is automatically injected by Render — do NOT set it here.
