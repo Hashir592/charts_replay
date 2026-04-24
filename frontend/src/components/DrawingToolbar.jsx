@@ -3,6 +3,7 @@ import {
   MousePointer2, 
   Minus, 
   TrendingUp, 
+  ArrowRight,
   Activity, 
   TrendingDown, 
   AlignJustify,
@@ -35,6 +36,8 @@ export default function DrawingToolbar({ activeTool, setActiveTool, clearDrawing
       <div className="tool-section">
         <ToolButton tool="horizontal_line" icon={Minus} title="Horizontal Line" />
         <ToolButton tool="trend_line" icon={TrendingUp} title="Trend Line" />
+        <ToolButton tool="ray" icon={ArrowRight} title="Ray" />
+        <ToolButton tool="extended_line" icon={TrendingUp} title="Extended Line" />
       </div>
 
       <div className="tool-divider" />

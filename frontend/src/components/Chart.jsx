@@ -165,8 +165,13 @@ export default function Chart({
     // Only fit content if the dataset completely changed (different symbol/timeframe)
     const firstCandleTime = candles[0]?.time;
     if (firstCandleTime !== firstCandleTimeRef.current) {
-      mainChartRef.current.timeScale().fitContent();
-      if (rsiChartRef.current) rsiChartRef.current.timeScale().fitContent();
+      // Policy A: always go to latest candle and autoscale price
+      mainChartRef.current.timeScale().scrollToRealTime();
+      if (rsiChartRef.current) rsiChartRef.current.timeScale().scrollToRealTime();
+      
+      // Force autoscale on the main price scale
+      mainChartRef.current.priceScale('right').applyOptions({ autoScale: true });
+      
       firstCandleTimeRef.current = firstCandleTime;
     }
 
@@ -323,6 +328,7 @@ export default function Chart({
           setActiveTool={setActiveTool}
           selectedDrawingId={selectedDrawingId}
           setSelectedDrawingId={setSelectedDrawingId}
+          data={data}
         />
       </div>
       <div ref={rsiContainerRef} className="rsi-chart" style={{ display: 'none' }} />
