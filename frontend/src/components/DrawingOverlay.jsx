@@ -117,24 +117,37 @@ export default function DrawingOverlay({
   // ─── Sync logical indexes when data changes ───
   useEffect(() => {
     if (!mainChart || !data || !data.candles || data.candles.length === 0 || drawings.length === 0) return;
-    
+
     const timeScale = mainChart.timeScale();
     let changed = false;
     const newDrawings = drawings.map(d => {
       const newPoints = d.points.map(p => {
-        const coord = timeScale.timeToCoordinate(p.time);
-        if (coord !== null) {
-          const logical = timeScale.coordinateToLogical(coord);
-          if (logical !== null && p.logical !== logical) {
-            changed = true;
-            return { ...p, logical };
-          }
+        // A point dropped past the last bar has no time — coordinateToTime()
+        // returns null out there, so it stays anchored by `logical` alone.
+        // timeToCoordinate(null) throws inside Lightweight Charts, and an
+        // exception here unmounts the whole app; the drawing is persisted, so
+        // every reload would crash again. Skip those points instead.
+        if (p.time == null) return p;
+
+        let coord = null;
+        try {
+          coord = timeScale.timeToCoordinate(p.time);
+        } catch {
+          // Malformed timestamp from an older save — leave the point alone.
+          return p;
+        }
+        if (coord === null) return p;
+
+        const logical = timeScale.coordinateToLogical(coord);
+        if (logical !== null && p.logical !== logical) {
+          changed = true;
+          return { ...p, logical };
         }
         return p;
       });
       return { ...d, points: newPoints };
     });
-    
+
     if (changed) {
       setDrawings(newDrawings);
     }

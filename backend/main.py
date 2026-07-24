@@ -130,6 +130,22 @@ async def health() -> dict:
 
 
 @app.get(
+    "/symbols",
+    summary="Get symbols info",
+    description="Returns symbol info for paper trading (pip value, contract size).",
+    tags=["Meta"],
+    response_model=APIResponse,
+)
+async def get_symbols():
+    symbols = [
+        {"id": "BTCUSD", "name": "Bitcoin / USD", "pip": 1.0, "contractSize": 1},
+        {"id": "ETHUSD", "name": "Ethereum / USD", "pip": 0.1, "contractSize": 10},
+        {"id": "XAUUSD", "name": "Gold / USD", "pip": 0.01, "contractSize": 100}
+    ]
+    return _ok({"symbols": symbols})
+
+
+@app.get(
     "/candles",
     summary="OHLCV candle data",
     description=(

@@ -31,3 +31,5 @@ export const fetchSMA = (symbol, timeframe, period) =>
 
 export const fetchVolume = (symbol, timeframe) =>
   fetchAPI('/indicators/volume', { symbol, timeframe });
+
+export const fetchSymbols = () => fetchAPI('/symbols');
