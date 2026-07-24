@@ -19,6 +19,12 @@ services:
     # Add your Vercel frontend URL here after deploying the frontend.
     # SECRET values should be set in the Render dashboard, not here.
     envVars:
+      # Pin Python to 3.12 so pip installs prebuilt pandas/numpy wheels.
+      # On 3.13/3.14 there are no wheels yet, so pip compiles pandas from
+      # source and the build fails on the C++ toolchain.
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+
       - key: ENVIRONMENT
         value: production
 
