@@ -256,12 +256,14 @@ export default function App() {
 
   /* ── Data loading ────────────────────────────────────────────────────── */
   useEffect(() => {
-    fetchSymbols()
-      .then((res) => {
-        if (res && res.symbols) setSymbolsInfo(res.symbols);
-      })
-      .catch(console.error);
-  }, []);
+    if (symbolsInfo.length === 0) {
+      fetchSymbols()
+        .then((res) => {
+          if (res && res.symbols) setSymbolsInfo(res.symbols);
+        })
+        .catch(console.error);
+    }
+  }, [session.username]);
 
   useEffect(() => {
     let active = true;
